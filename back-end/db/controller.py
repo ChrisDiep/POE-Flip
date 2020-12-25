@@ -1,7 +1,7 @@
 from mongoengine import *
 from dateutil.parser import parse
 from datetime import datetime, timezone
-import models
+from db import models
 
 import json
 

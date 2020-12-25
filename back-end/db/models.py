@@ -1,5 +1,5 @@
 from mongoengine import *
-from datetime import datetime
+from datetime import datetime, timezone
 
 class Listing(EmbeddedDocument):
     name = StringField(required=True)
@@ -14,6 +14,6 @@ class Listing(EmbeddedDocument):
 class Currency(Document):
     currency_name = StringField(required=True)
     icon = StringField(required=True)
-    last_updated = DateTimeField(default=datetime.utcnow())
+    last_updated = DateTimeField(default=datetime.now(timezone.utc))
     prices = MapField(ListField(EmbeddedDocumentField(Listing)))
 
