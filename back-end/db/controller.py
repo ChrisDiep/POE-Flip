@@ -1,8 +1,9 @@
 from mongoengine import *
 from dateutil.parser import parse
+from datetime import datetime, timezone
 import models
 
-# import json
+import json
 
 
 class Mongo:
@@ -21,8 +22,8 @@ class Mongo:
     def insert_currency(self, data):
         """ Inserts currency entry into database """
         models.Currency(
-            currency_name=data["result"][0]["listing"]["price"]["exchange"]["currency"],
-            icon=data["result"][0]["item"]["icon"],
+            currency_name=data["listing"]["price"]["exchange"]["currency"],
+            icon=data["item"]["icon"],
             prices={},
         ).save()
 
@@ -50,14 +51,47 @@ class Mongo:
             }
         )
 
+    def insert_entries(self, data):
+        for results in data:
+            self.insert_currency(results[0]["result"][0])
+            for result in results:
+                self.insert_listings(
+                    result["result"][0]["listing"]["price"]["exchange"]["currency"],
+                    result,
+                )
+
+    def get_total_entries(self):
+        results = json.loads(models.Currency.objects().to_json())
+        entries = []
+        for result in results:
+            entries.append(result["currency_name"])
+        return entries
+
+    def get_stale_entries(self):
+        results = json.loads(models.Currency.objects().to_json())
+        stale_entries = []
+        for result in results:
+            if self._is_stale(result):
+                currency_name = result["currency_name"]
+                stale_entries.append(currency_name)
+        return stale_entries
+
+    def _is_stale(self, result):
+        """ Checks if data in the db is older than a minute """
+        date = result["last_updated"]["$date"] / 1000
+        now_minus_one_minute = datetime.now(timezone.utc).timestamp() - 60
+        return date < now_minus_one_minute
+
     def find(self, curr):
         """ Returns then entry for a single currency """
         return models.Currency.objects(currency_name=curr).to_json()
 
 
 # with Mongo() as mongo:
-#     f = open("dummy.json")
+#     f = open("dummy2.json")
 #     data = json.load(f)
-#     mongo.insert_currency(data)
-#     mongo.insert_listings("exalted", data)
+#     # mongo.insert_currency(data)
+#     # mongo.insert_listings("exalted", data)
+#     mongo.insert_entries(data)
 #     f.close()
+#     # print(mongo.get_stale_entries())
