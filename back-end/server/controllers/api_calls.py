@@ -50,13 +50,16 @@ class POEOfficial:
         payload = {
             "exchange": {"status": {"option": "online"}, "have": [have], "want": [want]}
         }
+        print(payload)
         async with Requests() as connection:
             trade_info = await connection.post(url=self.trade_id_url, json=payload)
+            print(trade_info)
             url = self._generate_trade_url(trade_info["result"][0:10], trade_info["id"])
             trades = await connection.get(url=url)
             return trades
 
     async def get_trades(self, have, wants):
+        """ Get Multiple Buy Offers for One Currency """
         results = []
         for want in wants:
             if have != want:

@@ -1,7 +1,8 @@
-from flask import Flask
+# from flask import Flask
+# from server import routes
 
-app = Flask(__name__)
 
-from server import views
+# app = Flask(__name__)
 
-app.config.from_object('config')
+
+# app.config.from_object('config')
