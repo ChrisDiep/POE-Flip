@@ -31,12 +31,12 @@ def return_top_trades():
         #     #update stale entries
         #     print('not')
         # elif (db_entries != currencies.length):
-        new_entries = []
-        for currency in currencies:
-            print(currency)
-            if currency not in db_entries:
-                new_entries.append(asyncio.run(api.get_trades(currency, currencies)))
-        mongo.insert_entries(new_entries)
+        # new_entries = []
+        # for currency in currencies:
+        #     if currency not in db_entries:
+        #         new_entries.append(asyncio.run(api.get_trades(currency, currencies)))
+        # mongo.insert_entries(new_entries)
         # else:
         #     #pull from db
-        return "hello"
+        return mongo.find()
+        # return "hello"

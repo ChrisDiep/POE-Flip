@@ -82,9 +82,12 @@ class Mongo:
         now_minus_one_minute = datetime.now(timezone.utc).timestamp() - 60
         return date < now_minus_one_minute
 
-    def find(self, curr):
-        """ Returns then entry for a single currency """
-        return models.Currency.objects(currency_name=curr).to_json()
+    def find(self, curr=""):
+        """ Returns then entry for a given currency or all if none are given """
+        if curr == "":
+            return models.Currency.objects.to_json()
+        else:
+            return models.Currency.objects(currency_name=curr).to_json()
 
 
 # with Mongo() as mongo:
