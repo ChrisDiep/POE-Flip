@@ -2,7 +2,7 @@ from mongoengine import *
 from dateutil.parser import parse
 import models
 
-import json
+# import json
 
 
 class Mongo:
@@ -10,7 +10,6 @@ class Mongo:
 
     def __init__(self):
         self.db_name = "POE-Flip"
-        connect(self.db_name)
 
     def __enter__(self):
         connect(self.db_name)
@@ -56,9 +55,9 @@ class Mongo:
         return models.Currency.objects(currency_name=curr).to_json()
 
 
-with Mongo() as mongo:
-    f = open("dummy.json")
-    data = json.load(f)
-    mongo.insert_currency(data)
-    mongo.insert_listings("exalted", data)
-    f.close()
+# with Mongo() as mongo:
+#     f = open("dummy.json")
+#     data = json.load(f)
+#     mongo.insert_currency(data)
+#     mongo.insert_listings("exalted", data)
+#     f.close()
