@@ -1,7 +1,8 @@
 import aiohttp
 import json
-
+from time import sleep
 import asyncio
+
 
 class Requests:
     """ Creates a shared client pool for requests """
@@ -56,17 +57,27 @@ class POEOfficial:
             trades = await connection.get(url=url)
             return trades
 
-    async def get_trades(self, have, wants):
+    async def get_trades(self, have, wants, delay):
         """ Get Multiple Buy Offers for One Currency """
         results = []
         for want in wants:
             if have != want:
+                sleep(delay)
+                print(f"Requesting: {want} for {have}")
                 results.append(self.get_trade(have, want))
         return await asyncio.gather(*results)
+
 
 class POENinja:
     def __init__(self, curr_league):
         self.league = curr_league
+        self.currency_url = f"https://poe.ninja/api/data/CurrencyOverview?league={self.league}&type=Currency&language=en"
+
+    async def get_currencies(self):
+        async with Requests() as connection:
+            currencies = await connection.get(url=self.currency_url)
+            return currencies
+
 
 # currencies = [
 #     "exalted",
@@ -76,4 +87,3 @@ class POENinja:
 
 # api = POEOfficial("placeholder", "Heist")
 # print(asyncio.run(api.get_trades("chaos", currencies)))
-
