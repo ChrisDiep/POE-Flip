@@ -8,10 +8,11 @@ currencies = [
     "Exalted Orb",
     "Chaos Orb",
     "Divine Orb",
-    # "orb-of-fusing",
-    # "vaal-orb",
+    "Orb of Fusing",
+    "Orb of Alteration"
 ]
 currency_ref = None
+reverse_currency_ref = None
 poe_official_currencies = []
 LEAGUE = "Heist"
 
@@ -36,17 +37,23 @@ def _get_chaos_equiv(db):
 
 def _parse_currency_ref(api):
     global currency_ref
+    global reverse_currency_ref
     global poe_official_currencies
     new_poe_official_currencies = []
     if currency_ref is None:
         currencies_info = asyncio.run(api.get_currency_ref())["result"][0]["entries"]
         currency_info = {}
+        reverse_currency_info = {}
         for currency in currencies_info:
             currency_info[currency["text"]] = {
                 "id": currency["id"],
                 "image": currency["image"],
             }
+            reverse_currency_info[currency["id"]] = {
+                "text": currency["text"]
+            }
         currency_ref = currency_info
+        reverse_currency_ref = reverse_currency_info
         for currency in currencies:
             new_poe_official_currencies.append(currency_ref[currency]["id"])
         poe_official_currencies = new_poe_official_currencies
@@ -55,8 +62,11 @@ def _parse_currency_ref(api):
 def get_listings():
     poe_official = POEOfficial("placeholder", LEAGUE)
     _parse_currency_ref(poe_official)
-    print(poe_official_currencies)
-    with Mongo() as mongo:
+    delay = 1.4
+    total_time = delay * (len(currencies)-1) * len(currencies)
+    elapsed_time = 0
+    print(reverse_currency_ref)
+    with Mongo(reverse_currency_ref) as mongo:
         chaos_equiv = _get_chaos_equiv(mongo)["info"]
         new_entries = []
         for currency in currencies:
@@ -74,15 +84,15 @@ def get_listings():
                 currency_info["sell_listings"] if currency_info is not None else None
             )
             if sell_price and sell_listings > 15:
-                # poe_official.get_trades(currency, currencies, 1.4)
                 new_entries.append(
                     asyncio.run(
                         poe_official.get_trades(
-                            poe_official_currency, poe_official_currencies, 1.4
+                            poe_official_currency, poe_official_currencies, delay
                         )
                     )
                 )
-            print(f"Added {currency} to new entries")
+            elapsed_time += (len(currencies) - 1) * delay
+            print(f"Added {currency} to new entries, {round((total_time - elapsed_time)/60, 2)} minutes remaining")
         mongo.insert_entries(new_entries)
         log = ""
         for entry in new_entries:
