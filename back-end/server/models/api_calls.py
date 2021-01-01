@@ -59,9 +59,12 @@ class POEOfficial:
         }
         async with Requests() as connection:
             trade_info = await connection.post(url=self.trade_id_url, json=payload)
-            url = self._generate_trade_url(trade_info["result"][0:10], trade_info["id"])
-            trades = await connection.get(url=url)
-            return trades
+            print(len(trade_info["result"]))
+            if len(trade_info["result"]) != 0:
+                url = self._generate_trade_url(trade_info["result"][0:10], trade_info["id"])
+                trades = await connection.get(url=url)
+                return trades
+            return None
 
     async def get_trades(self, have, wants, delay):
         """ Get Multiple Buy Offers for One Currency """
@@ -70,7 +73,8 @@ class POEOfficial:
             if have != want:
                 sleep(delay)
                 print(f"Requesting: {want} for {have}")
-                results.append(self.get_trade(have, want))
+                request = self.get_trade(have, want)
+                results.append(request)
         return await asyncio.gather(*results)
         # return None
 
