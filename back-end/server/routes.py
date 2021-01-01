@@ -1,9 +1,10 @@
-from server.server import app
+from server.index import app
 import requests
 import asyncio
-from server.models.api_calls import POEOfficial
-from db.controller import Mongo
 
+from server.models.api_calls import POEOfficial, POENinja
+from db.controller import Mongo
+from server.controllers.api import get_listings
 
 # @app.route("/")
 # def index():
@@ -17,6 +18,7 @@ from db.controller import Mongo
 def hello():
     return "Hello"
 
+
 @app.route('/api/v1/poeofficial/currency', methods=["GET"])
 def return_top_trades():
     currencies = [
@@ -27,6 +29,8 @@ def return_top_trades():
         "vaal-orb",
     ]
     api = POEOfficial("placeholder", "Heist")
+    #Retrieve API Information
+    #Traverse through Info to get top listings
     with Mongo() as mongo:
         db_entries = mongo.get_total_entries()
         # if (mongo.get_stale_entries()):
@@ -36,9 +40,15 @@ def return_top_trades():
         new_entries = []
         for currency in currencies:
             if currency not in db_entries:
-                new_entries.append(asyncio.run(api.get_trades(currency, currencies)))
+                new_entries.append(asyncio.run(
+                    api.get_trades(currency, currencies)))
         mongo.insert_entries(new_entries)
         # else:
         #     #pull from db
         # return mongo.find()
         return "hello"
+
+
+@app.route('/api/v1/currency')
+def return_chaos_equiv():
+    return get_listings()

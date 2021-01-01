@@ -9,8 +9,9 @@ import json
 class Mongo:
     """ Database methods for updating/inserting """
 
-    def __init__(self):
+    def __init__(self, reverse_currency_ref=None):
         self.db_name = "POE-Flip"
+        self.ref = reverse_currency_ref
 
     def __enter__(self):
         connect(self.db_name)
@@ -19,13 +20,25 @@ class Mongo:
     def __exit__(self, *err):
         disconnect(self.db_name)
 
+    def _get_curr_name(self, short_name):
+        if self.ref is not None:
+            return self.ref[short_name]["text"]
+        return short_name
+
     def insert_currency(self, data):
         """ Inserts currency entry into database """
-        models.Currency(
-            currency_name=data["listing"]["price"]["exchange"]["currency"],
-            icon=data["item"]["icon"],
-            prices={},
-        ).save()
+        models.Currency.objects(
+            currency_name=data["listing"]["price"]["exchange"]["currency"]
+        ).update(
+            **{
+                "currency_name": self._get_curr_name(
+                    data["listing"]["price"]["exchange"]["currency"]
+                ),
+                "icon": data["item"]["icon"],
+                "prices": {},
+            },
+            upsert=True,
+        )
 
     def insert_listings(self, curr, data):
         """ Inserts listings for a currency entry in the database """
@@ -38,27 +51,33 @@ class Mongo:
                     name=listing["account"]["name"],
                     last_char=listing["account"]["lastCharacterName"],
                     posted=parse(listing["indexed"]),
-                    want_curr=listing["price"]["exchange"]["currency"],
+                    want_curr=self._get_curr_name(
+                        listing["price"]["exchange"]["currency"]
+                    ),
                     want_rate=listing["price"]["exchange"]["amount"],
-                    has_curr=listing["price"]["item"]["currency"],
+                    has_curr=self._get_curr_name(listing["price"]["item"]["currency"]),
                     has_rate=listing["price"]["item"]["amount"],
                     has_stock=listing["price"]["item"]["stock"],
                 )
             )
-        models.Currency.objects(currency_name=curr).update(
+        models.Currency.objects(currency_name=self._get_curr_name(curr)).update(
             **{
-                f"set__prices__{data[0]['listing']['price']['item']['currency']}": listings
+                f"set__prices__{self._get_curr_name(data[0]['listing']['price']['item']['currency'])}": listings
             }
         )
 
     def insert_entries(self, data):
         for results in data:
-            self.insert_currency(results[0]["result"][0])
-            for result in results:
-                self.insert_listings(
-                    result["result"][0]["listing"]["price"]["exchange"]["currency"],
-                    result,
-                )
+            if results[0] is not None:
+                self.insert_currency(results[0]["result"][0])
+                for result in results:
+                    if result is not None:
+                        self.insert_listings(
+                            result["result"][0]["listing"]["price"]["exchange"][
+                                "currency"
+                            ],
+                            result,
+                        )
 
     def get_total_entries(self):
         results = json.loads(models.Currency.objects().to_json())
@@ -93,7 +112,7 @@ class Mongo:
         currencies_data = data["lines"]
         currencies = {}
         for currency in currencies_data:
-            currencies[currency["detailsId"]] = models.ChaosEquivListing(
+            currencies[currency["currencyTypeName"]] = models.ChaosEquivListing(
                 buy_price=round(currency["receive"]["value"], 1)
                 if currency["receive"]
                 else None,

@@ -40,11 +40,17 @@ class POEOfficial:
             f"http://www.pathofexile.com/api/trade/exchange/{self.league}"
         )
         self.trades_url = "https://www.pathofexile.com/api/trade/fetch/"
+        self.currency_ref_url = "https://www.pathofexile.com/api/trade/data/static"
 
     def _generate_trade_url(self, trade_ids, query):
         item_id_str = ",".join(trade_ids)
         url = self.trades_url + (f"{item_id_str}?query={query}&exchange")
         return url
+
+    async def get_currency_ref(self):
+        async with Requests() as connection:
+            response = await connection.get(url=self.currency_ref_url)
+            return response
 
     async def get_trade(self, have, want):
         """ Get the trade listing information given the buy/sell currency """
@@ -53,9 +59,11 @@ class POEOfficial:
         }
         async with Requests() as connection:
             trade_info = await connection.post(url=self.trade_id_url, json=payload)
-            url = self._generate_trade_url(trade_info["result"][0:10], trade_info["id"])
-            trades = await connection.get(url=url)
-            return trades
+            if len(trade_info["result"]) != 0:
+                url = self._generate_trade_url(trade_info["result"][0:10], trade_info["id"])
+                trades = await connection.get(url=url)
+                return trades
+            return None
 
     async def get_trades(self, have, wants, delay):
         """ Get Multiple Buy Offers for One Currency """
@@ -64,8 +72,10 @@ class POEOfficial:
             if have != want:
                 sleep(delay)
                 print(f"Requesting: {want} for {have}")
-                results.append(self.get_trade(have, want))
+                request = self.get_trade(have, want)
+                results.append(request)
         return await asyncio.gather(*results)
+        # return None
 
 
 class POENinja:
