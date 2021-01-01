@@ -56,12 +56,13 @@ class Mongo:
 
     def insert_entries(self, data):
         for results in data:
-            self.insert_currency(results[0]["result"][0])
-            for result in results:
-                self.insert_listings(
-                    result["result"][0]["listing"]["price"]["exchange"]["currency"],
-                    result,
-                )
+            if results[0] is not None:
+                self.insert_currency(results[0]["result"][0])
+                for result in results:
+                    self.insert_listings(
+                        result["result"][0]["listing"]["price"]["exchange"]["currency"],
+                        result,
+                    )
 
     def get_total_entries(self):
         results = json.loads(models.Currency.objects().to_json())
