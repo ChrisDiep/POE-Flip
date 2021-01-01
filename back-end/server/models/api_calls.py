@@ -40,11 +40,17 @@ class POEOfficial:
             f"http://www.pathofexile.com/api/trade/exchange/{self.league}"
         )
         self.trades_url = "https://www.pathofexile.com/api/trade/fetch/"
+        self.currency_ref_url = "https://www.pathofexile.com/api/trade/data/static"
 
     def _generate_trade_url(self, trade_ids, query):
         item_id_str = ",".join(trade_ids)
         url = self.trades_url + (f"{item_id_str}?query={query}&exchange")
         return url
+
+    async def get_currency_ref(self):
+        async with Requests() as connection:
+            response = await connection.get(url=self.currency_ref_url)
+            return response
 
     async def get_trade(self, have, want):
         """ Get the trade listing information given the buy/sell currency """
@@ -66,6 +72,7 @@ class POEOfficial:
                 print(f"Requesting: {want} for {have}")
                 results.append(self.get_trade(have, want))
         return await asyncio.gather(*results)
+        # return None
 
 
 class POENinja:
