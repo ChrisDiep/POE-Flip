@@ -93,7 +93,7 @@ class Mongo:
         currencies_data = data["lines"]
         currencies = {}
         for currency in currencies_data:
-            currencies[currency["detailsId"]] = models.ChaosEquivListing(
+            currencies[currency["currencyTypeName"]] = models.ChaosEquivListing(
                 buy_price=round(currency["receive"]["value"], 1)
                 if currency["receive"]
                 else None,
