@@ -21,11 +21,14 @@ class Mongo:
 
     def insert_currency(self, data):
         """ Inserts currency entry into database """
-        models.Currency(
-            currency_name=data["listing"]["price"]["exchange"]["currency"],
-            icon=data["item"]["icon"],
-            prices={},
-        ).save()
+        models.Currency.objects(currency_name=data["listing"]["price"]["exchange"]["currency"]).update(
+            **{
+                "currency_name": data["listing"]["price"]["exchange"]["currency"],
+                "icon": data["item"]["icon"],
+                "prices": {},
+            },
+            upsert=True
+        )
 
     def insert_listings(self, curr, data):
         """ Inserts listings for a currency entry in the database """
