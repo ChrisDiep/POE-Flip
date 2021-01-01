@@ -82,12 +82,35 @@ class Mongo:
         now_minus_one_minute = datetime.now(timezone.utc).timestamp() - 60
         return date < now_minus_one_minute
 
-    def find(self, curr=""):
+    def find_currency(self, curr=""):
         """ Returns then entry for a given currency or all if none are given """
         if curr == "":
             return models.Currency.objects.to_json()
         else:
             return models.Currency.objects(currency_name=curr).to_json()
+
+    def insert_chaos_equiv(self, data):
+        currencies_data = data["lines"]
+        currencies = {}
+        for currency in currencies_data:
+            currencies[currency["detailsId"]] = models.ChaosEquivListing(
+                buy_price=round(currency["receive"]["value"], 1)
+                if currency["receive"]
+                else None,
+                buy_listings=currency["receive"]["count"]
+                if currency["receive"]
+                else None,
+                sell_price=round(1 / currency["pay"]["value"], 1)
+                if currency["pay"]
+                else None,
+                sell_listings=currency["pay"]["count"] if currency["pay"] else None,
+            )
+        models.ChaosEquivalent(
+            info=currencies,
+        ).save()
+
+    def find_chaos_equiv(self):
+        return models.ChaosEquivalent.objects.to_json()
 
 
 # with Mongo() as mongo:
