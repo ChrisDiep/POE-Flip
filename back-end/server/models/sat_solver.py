@@ -2,11 +2,15 @@ from ortools.sat.python import cp_model
 import uuid
 from math import floor
 
+# Settings
 LISTINGS_START = 0
 LISTINGS_STOP = 5
-MAX_TIME = 10.0 #seconds
+MAX_TIME = 10.0
 MAX_WHISPERS = 4
+
+
 class SolutionsContainer(cp_model.CpSolverSolutionCallback):
+    """ Container to store solutions """
     def __init__(self, variables):
         cp_model.CpSolverSolutionCallback.__init__(self)
         self.__variables = variables
@@ -14,6 +18,7 @@ class SolutionsContainer(cp_model.CpSolverSolutionCallback):
         self.__solutions = []
 
     def on_solution_callback(self):
+        """ Callback that runs after each solution found """
         self.__solution_count += 1
         solution = {}
         for variable in self.__variables:
@@ -21,66 +26,68 @@ class SolutionsContainer(cp_model.CpSolverSolutionCallback):
         self.__solutions.append(solution)
 
     def solution_count(self):
+        """ Returns the total numbr of solutions """
         return self.__solution_count
 
     def solutions(self):
+        """ Return the soutions """
         return self.__solutions
 
 
 def SearchForAllSolutions(*args):
+    """ Searches for all solutions to the linear equations """
     model = cp_model.CpModel()
     vals = []
     constraints = []
     constraints_dict = {}
-    # print(f"Length: {len(args) - 1}")
+
+    # Add variable constraints to the model
     for index in range(len(args)):
         new_constraints = _get_constraint(model, args[index], index)
         constraints_dict.update(new_constraints)
-        # constraints_dict.update(new_constraints[1])
         constraints.append(new_constraints)
-    print(len(constraints_dict))
 
-    used_vars = [model.NewBoolVar('{}'.format(i)) for i in range(len(constraints_dict))]
-    for uuid, index in zip(constraints_dict, range(len(constraints_dict))):
-        model.Add(constraints_dict[uuid]["val"] == 0).OnlyEnforceIf(used_vars[index].Not())
-        model.Add(constraints_dict[uuid]["val"] > 0).OnlyEnforceIf(used_vars[index])
+    # Add Constraints to keep track of variable usage
+    used_vars = [model.NewBoolVar("{}".format(i)) for i in range(len(constraints_dict))]
+
+    # Adds conditional constraints based on variable usage to the model
+    for uniq_id, index in zip(constraints_dict, range(len(constraints_dict))):
+        model.Add(constraints_dict[uniq_id]["val"] == 0).OnlyEnforceIf(
+            used_vars[index].Not()
+        )
+        model.Add(constraints_dict[uniq_id]["val"] > 0).OnlyEnforceIf(used_vars[index])
+
+    # Adds constraint to limit the number of non-zero variables
     model.Add(sum(used_vars) <= MAX_WHISPERS)
 
+    # Adds the equations to the model
     for index in range(len(constraints) - 1):
         eqn1 = []
         eqn2 = []
+        # Equations are added with an alternating pattern
+        # Equation 1 depends on both have/want amt when its not the first equation
         for constraint in constraints[index]:
             constraint = constraints[index][constraint]
-            # print(constraint)
-            coeff = constraint["coefficients"][0] if index == 0 else constraint["coefficients"][1]
-            eqn1.append(
-                coeff
-                * constraint["val"]
+            coeff = (
+                constraint["coefficients"][0]
+                if index == 0
+                else constraint["coefficients"][1]
             )
+            eqn1.append(coeff * constraint["val"])
             vals.append(constraint["val"])
-        print(f"equation 1: {eqn1}")
         for constraint in constraints[index + 1]:
             constraint = constraints[index + 1][constraint]
-            # print(constraint)
             eqn2.append(constraint["coefficients"][0] * constraint["val"])
             vals.append(constraint["val"])
 
-        print(f"equation 2: {eqn2}")
         model.Add(sum(eqn1) == sum(eqn2))
+
+    #Creates Solver and Initializes CP-Sat Solver
     solver = cp_model.CpSolver()
-    # solver.parameters.log_search_progress = True
     solver.parameters.max_time_in_seconds = MAX_TIME
     container = SolutionsContainer(vals)
-    # print(model)
     status = solver.SearchForAllSolutions(model, container)
-    # print(f"Status = {solver.StatusName(status)}")
-    print(f"Number of Solutions Found: {container.solution_count()}")
-    # print(container.solutions())
-    # print(constraints_dict)
-    # return {
-    #     "solutions": container.solutions(),
-    #     "reference": constraints_dict,
-    # }
+
     return {
         "trades": " ".join([i[0]["has_curr"] for i in args]),
         "solutions_num": container.solution_count(),
@@ -104,29 +111,3 @@ def _get_constraint(model, listings, index):
             "conversion": conversion,
         }
     return constraint
-
-
-# arr = [
-#     [
-#         {"has_curr": "curr", "want_rate": 100, "has_rate": 1, "has_stock": 24},
-#     ],
-#     [
-#         {"has_curr": "curr","want_rate": 5, "has_rate": 550, "has_stock": 2002},
-#         {"has_curr": "curr", "want_rate": 5, "has_rate": 550, "has_stock": 1700},
-#         {"has_curr": "curr", "want_rate": 5, "has_rate": 550, "has_stock": 675},
-#     ],
-# ]
-# arr2 = [
-#     [
-#         {"want_rate": 100, "has_rate": 1, "has_stock": 24},
-#     ],
-#     [
-#         {"want_rate": 1, "has_rate": 10, "has_stock": 24},
-#         {"want_rate": 1, "has_rate": 25, "has_stock": 25},
-#     ],
-#     [
-#         {"want_rate": 5, "has_rate": 20, "has_stock": 60},
-#         {"want_rate": 1, "has_rate": 5, "has_stock": 30},
-#     ],
-# ]
-# SearchForAllSolutions(*arr)
