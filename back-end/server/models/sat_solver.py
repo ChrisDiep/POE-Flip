@@ -6,7 +6,7 @@ from math import floor
 LISTINGS_START = 0
 LISTINGS_STOP = 3
 MAX_TIME = 10.0
-MAX_WHISPERS = 3
+
 
 
 class SolutionsContainer(cp_model.CpSolverSolutionCallback):
@@ -36,6 +36,7 @@ class SolutionsContainer(cp_model.CpSolverSolutionCallback):
 
 def SearchForAllSolutions(*args):
     """ Searches for all solutions to the linear equations """
+    MAX_WHISPERS = 3 if len(args) < 3 else 5
     model = cp_model.CpModel()
     vals = []
     constraints = []
@@ -120,3 +121,4 @@ def _get_constraint(model, listings, index):
             "conversion": conversion,
         }
     return (constraint, ref)
+
