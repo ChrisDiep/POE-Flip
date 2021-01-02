@@ -4,9 +4,9 @@ from math import floor
 
 # Settings
 LISTINGS_START = 0
-LISTINGS_STOP = 5
+LISTINGS_STOP = 3
 MAX_TIME = 10.0
-MAX_WHISPERS = 4
+MAX_WHISPERS = 3
 
 
 class SolutionsContainer(cp_model.CpSolverSolutionCallback):
@@ -40,12 +40,14 @@ def SearchForAllSolutions(*args):
     vals = []
     constraints = []
     constraints_dict = {}
+    uuid_ref = {}
 
     # Add variable constraints to the model
     for index in range(len(args)):
         new_constraints = _get_constraint(model, args[index], index)
-        constraints_dict.update(new_constraints)
-        constraints.append(new_constraints)
+        constraints_dict.update(new_constraints[0])
+        constraints.append(new_constraints[0])
+        uuid_ref.update(new_constraints[1])
 
     # Add Constraints to keep track of variable usage
     used_vars = [model.NewBoolVar("{}".format(i)) for i in range(len(constraints_dict))]
@@ -91,6 +93,8 @@ def SearchForAllSolutions(*args):
     return {
         "trades": " ".join([i[0]["has_curr"] for i in args]),
         "solutions_num": container.solution_count(),
+        "solutions": container.solutions(),
+        "uuid_ref": uuid_ref,
         "time": solver.WallTime(),
         "status": solver.StatusName(),
     }
@@ -98,6 +102,7 @@ def SearchForAllSolutions(*args):
 
 def _get_constraint(model, listings, index):
     constraint = {}
+    ref = {}
     for listing in listings[LISTINGS_START:LISTINGS_STOP]:
         uuid1 = uuid.uuid1()
         max_val = floor(listing["has_stock"] / listing["has_rate"])
@@ -110,4 +115,8 @@ def _get_constraint(model, listings, index):
             "coefficients": [coefficient_p1, coefficient_p2],
             "conversion": conversion,
         }
-    return constraint
+        ref[str(uuid1)] = {
+            "listing": listing,
+            "conversion": conversion,
+        }
+    return (constraint, ref)
