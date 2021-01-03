@@ -6,10 +6,16 @@ class Listing(EmbeddedDocument):
     name = StringField(required=True)
     last_char = StringField(required=True)
     posted = DateTimeField()
+    status = StringField()
+    league = StringField()
+    whisper = StringField()
+    language = StringField()
     want_curr = StringField(required=True)
     want_rate = IntField()
+    # want_rate = DecimalField(precision=2)
     has_curr = StringField(required=True)
     has_rate = IntField()
+    # has_rate = DecimalField(precision=2)
     has_stock = IntField()
 
 
