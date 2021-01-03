@@ -4,13 +4,13 @@ from math import floor
 
 # Settings
 LISTINGS_START = 0
-LISTINGS_STOP = 3
+LISTINGS_STOP = 4
 MAX_TIME = 10.0
-
 
 
 class SolutionsContainer(cp_model.CpSolverSolutionCallback):
     """ Container to store solutions """
+
     def __init__(self, variables):
         cp_model.CpSolverSolutionCallback.__init__(self)
         self.__variables = variables
@@ -85,14 +85,14 @@ def SearchForAllSolutions(*args):
 
         model.Add(sum(eqn1) == sum(eqn2))
 
-    #Creates Solver and Initializes CP-Sat Solver
+    # Creates Solver and Initializes CP-Sat Solver
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = MAX_TIME
     container = SolutionsContainer(vals)
     status = solver.SearchForAllSolutions(model, container)
 
     return {
-        "trades": " ".join([i[0]["has_curr"] for i in args]),
+        "trades": ",".join([i[0]["has_curr"] for i in args]),
         "solutions_num": container.solution_count(),
         "solutions": container.solutions(),
         "uuid_ref": uuid_ref,
@@ -121,4 +121,3 @@ def _get_constraint(model, listings, index):
             "conversion": conversion,
         }
     return (constraint, ref)
-
