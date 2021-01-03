@@ -60,7 +60,9 @@ class POEOfficial:
         async with Requests() as connection:
             trade_info = await connection.post(url=self.trade_id_url, json=payload)
             if len(trade_info["result"]) != 0:
-                url = self._generate_trade_url(trade_info["result"][0:10], trade_info["id"])
+                url = self._generate_trade_url(
+                    trade_info["result"][0:10], trade_info["id"]
+                )
                 trades = await connection.get(url=url)
                 return trades
             return None

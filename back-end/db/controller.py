@@ -137,7 +137,29 @@ class Mongo:
     def find_chaos_equiv(self):
         return models.ChaosEquivalent.objects.to_json()
 
+    def insert_static_info(self, data):
+        data_list = data["result"]
+        for group in data_list:
+            entries = []
+            for entry in group["entries"]:
+                entries.append(models.EntryInfo(
+                    official_id=entry["id"],
+                    text=entry["text"],
+                    image=entry["image"] if "image" in entry else None
+                ))
+            models.StaticInfo.objects(
+                field_id=group["id"]
+            ).update(
+                **{
+                    "field_id": group["id"],
+                    "label": group["label"],
+                    "entries": entries
+                },
+                upsert=True,
+            )
 
+    def get_static_info(self):
+        return models.StaticInfo.objects.to_json()
 # with Mongo() as mongo:
 #     f = open("dummy2.json")
 #     data = json.load(f)

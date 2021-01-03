@@ -36,13 +36,13 @@ def _get_chaos_equiv(db):
         return json.loads(db.find_chaos_equiv())[-1]
 
 
-def _parse_currency_ref(api):
+def _parse_currency_ref(static_info):
     global currency_ref
     global reverse_currency_ref
     global poe_official_currencies
     new_poe_official_currencies = []
     if currency_ref is None:
-        currencies_info = asyncio.run(api.get_currency_ref())["result"][0]["entries"]
+        currencies_info = static_info["result"][0]["entries"]
         currency_info = {}
         reverse_currency_info = {}
         for currency in currencies_info:
@@ -65,10 +65,12 @@ def get_time_estimate_seconds():
 
 def update_listings():
     poe_official = POEOfficial("placeholder", LEAGUE)
-    _parse_currency_ref(poe_official)
+    static_info = asyncio.run(poe_official.get_currency_ref())
+    _parse_currency_ref(static_info)
     total_time = get_time_estimate_seconds()
     elapsed_time = 0
     with Mongo(reverse_currency_ref) as mongo:
+        mongo.insert_static_info(static_info)
         chaos_equiv = _get_chaos_equiv(mongo)["info"]
         new_entries = []
         for currency in currencies:

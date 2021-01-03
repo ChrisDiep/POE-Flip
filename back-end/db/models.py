@@ -36,3 +36,16 @@ class ChaosEquivListing(EmbeddedDocument):
 class ChaosEquivalent(Document):
     last_updated = DateTimeField(default=datetime.now(timezone.utc))
     info = MapField(EmbeddedDocumentField(ChaosEquivListing))
+
+
+class EntryInfo(EmbeddedDocument):
+    official_id = StringField()
+    text = StringField()
+    image = StringField(null=True)
+
+
+class StaticInfo(Document):
+    field_id = StringField()
+    last_updated = DateTimeField(default=datetime.now(timezone.utc))
+    label = StringField()
+    entries = ListField(EmbeddedDocumentField(EntryInfo))

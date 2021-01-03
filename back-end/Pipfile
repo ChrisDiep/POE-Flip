@@ -9,10 +9,13 @@ aiohttp = "*"
 pep8 = "*"
 mongoengine = "*"
 python-dateutil = "*"
+networkx = "*"
+ortools = "*"
 
 [dev-packages]
 pylint = "*"
 black = "*"
+matplotlib = "*"
 
 [requires]
 python_version = "3.8"
