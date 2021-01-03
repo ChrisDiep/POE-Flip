@@ -9,12 +9,13 @@ currencies = [
     "Chaos Orb",
     "Divine Orb",
     "Orb of Fusing",
-    "Orb of Alteration"
+    "Orb of Alteration",
 ]
 currency_ref = None
 reverse_currency_ref = None
 poe_official_currencies = []
 LEAGUE = "Heist"
+DELAY = 1.4
 
 
 def _get_chaos_equiv(db):
@@ -49,9 +50,7 @@ def _parse_currency_ref(api):
                 "id": currency["id"],
                 "image": currency["image"],
             }
-            reverse_currency_info[currency["id"]] = {
-                "text": currency["text"]
-            }
+            reverse_currency_info[currency["id"]] = {"text": currency["text"]}
         currency_ref = currency_info
         reverse_currency_ref = reverse_currency_info
         for currency in currencies:
@@ -59,13 +58,16 @@ def _parse_currency_ref(api):
         poe_official_currencies = new_poe_official_currencies
 
 
-def get_listings():
+def get_time_estimate_seconds():
+    time_estimate = DELAY * (len(currencies) - 1) * len(currencies)
+    return time_estimate
+
+
+def update_listings():
     poe_official = POEOfficial("placeholder", LEAGUE)
     _parse_currency_ref(poe_official)
-    delay = 1.4
-    total_time = delay * (len(currencies)-1) * len(currencies)
+    total_time = get_time_estimate_seconds()
     elapsed_time = 0
-    print(reverse_currency_ref)
     with Mongo(reverse_currency_ref) as mongo:
         chaos_equiv = _get_chaos_equiv(mongo)["info"]
         new_entries = []
@@ -87,12 +89,14 @@ def get_listings():
                 new_entries.append(
                     asyncio.run(
                         poe_official.get_trades(
-                            poe_official_currency, poe_official_currencies, delay
+                            poe_official_currency, poe_official_currencies, DELAY
                         )
                     )
                 )
-            elapsed_time += (len(currencies) - 1) * delay
-            print(f"Added {currency} to new entries, {round((total_time - elapsed_time)/60, 2)} minutes remaining")
+            elapsed_time += (len(currencies) - 1) * DELAY
+            print(
+                f"Added {currency} to new entries, {round((total_time - elapsed_time)/60, 2)} minutes remaining"
+            )
         mongo.insert_entries(new_entries)
         log = ""
         for entry in new_entries:

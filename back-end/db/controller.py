@@ -46,11 +46,17 @@ class Mongo:
         listings = []
         for listing in data:
             listing = listing["listing"]
+            online_info = listing["account"]["online"]
+            status = online_info["status"] if "status" in online_info else "online"
             listings.append(
                 models.Listing(
                     name=listing["account"]["name"],
                     last_char=listing["account"]["lastCharacterName"],
                     posted=parse(listing["indexed"]),
+                    status=status,
+                    league=online_info["league"],
+                    whisper=listing["whisper"],
+                    language=listing["account"]["language"],
                     want_curr=self._get_curr_name(
                         listing["price"]["exchange"]["currency"]
                     ),
