@@ -65,7 +65,12 @@ def call_update_listings():
 @app.route("/api/v1/static")
 def static_info():
     with Mongo() as mongo:
-        return mongo.get_static_info()
+        static_info = mongo.get_static_info()
+        if len(static_info):
+            api = POEOfficial("placeholder", "Heist")
+            mongo.insert_static_info(asyncio.run(api.get_currency_ref()))
+            return mongo.get_static_info()
+        return static_info
 
 
 @app.route("/api/v1/graph")
