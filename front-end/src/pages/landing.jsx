@@ -1,13 +1,13 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import logo from '../logo.svg';
 
-function App() {
+function Landing() {
   return (
-    <div className="App">
+    <div>
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload2.
+          Edit <code>src/App.js</code> and save to reload.
         </p>
         <a
           className="App-link"
@@ -22,4 +22,4 @@ function App() {
   );
 }
 
-export default App;
+export default Landing
