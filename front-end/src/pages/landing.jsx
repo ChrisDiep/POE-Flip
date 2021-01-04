@@ -15,7 +15,12 @@ function Landing() {
     }, {})
   }
   function getListings() {
-    setListings(dummy.listings)
+    const new_listings = dummy.listings.map((listing) => {
+      listing["trades"].unshift("Chaos Orb");
+      console.log(listing["trades"])
+      return listing;
+    })
+    setListings(new_listings)
   }
   return (
     <div>
