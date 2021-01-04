@@ -92,7 +92,7 @@ class Graph:
         for solution in solutions:
             obj = {}
             obj["trades"] = path_info["trades"].split(",")
-            obj["trades_num"] = len(obj["trades"])
+            count = 0
             obj["listings"] = {}
             for uuid in solution:
                 if solution[uuid] != 0:
@@ -118,6 +118,8 @@ class Graph:
                         obj["listings"][listing_info["has_curr"]].append(new_listing)
                     else:
                         obj["listings"][listing_info["has_curr"]] = [new_listing]
+                    count += 1
+            obj["trades_num"] = count
             start_curr_info = []
             end_curr_info = []
             if obj["trades"][0] in obj["listings"]:
@@ -134,7 +136,7 @@ class Graph:
                 has_rate = listing["info"]["has"]["min_amount"]
                 end_amt += solution * has_rate
             obj["total_profit"] = end_amt - start_amt
-            obj["profit_per_trade"] = obj["total_profit"] / obj["trades_num"]
+            obj["profit_per_trade"] = obj["total_profit"] / obj["trades_num"] if obj["trades_num"] != 0 else None
             objs.append(obj)
         return objs
 
