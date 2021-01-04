@@ -58,9 +58,12 @@ def _parse_currency_ref(static_info):
         poe_official_currencies = new_poe_official_currencies
 
 
-def get_time_estimate_seconds():
+def get_api_call_info():
     time_estimate = DELAY * (len(currencies) - 1) * len(currencies)
-    return time_estimate
+    return {
+        "time_estimate": time_estimate,
+        "currencies": currencies,
+    }
 
 
 def update_listings():
