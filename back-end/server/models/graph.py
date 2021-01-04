@@ -136,7 +136,7 @@ class Graph:
                 has_rate = listing["info"]["has"]["min_amount"]
                 end_amt += solution * has_rate
             obj["total_profit"] = end_amt - start_amt
-            obj["profit_per_trade"] = obj["total_profit"] / obj["trades_num"] if obj["trades_num"] != 0 else None
+            obj["profit_per_trade"] = round(obj["total_profit"] / obj["trades_num"], 2) if obj["trades_num"] != 0 else None
             objs.append(obj)
         return objs
 
