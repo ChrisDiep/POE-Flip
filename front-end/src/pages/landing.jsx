@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import { Col, Row, Container } from "react-bootstrap"
 import Selection from '../components/Selection'
 import Listings from '../components/Listings'
@@ -15,12 +15,14 @@ function Landing() {
     }, {})
   }
   function getListings() {
-    const new_listings = dummy.listings.map((listing) => {
-      listing["trades"].unshift("Chaos Orb");
-      console.log(listing["trades"])
-      return listing;
-    })
-    setListings(new_listings)
+    if (!listings) {
+      const new_listings = dummy.listings.map((listing) => {
+        listing["trades"].unshift("Chaos Orb");
+        console.log(listing["trades"])
+        return listing;
+      })
+      setListings(new_listings)
+    }
   }
   return (
     <div>
