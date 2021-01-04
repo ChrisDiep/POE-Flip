@@ -34,7 +34,7 @@ class SolutionsContainer(cp_model.CpSolverSolutionCallback):
         return self.__solutions
 
 
-def SearchForAllSolutions(*args):
+def SearchForAllSolutions(*args, start):
     """ Searches for all solutions to the linear equations """
     MAX_WHISPERS = 3 if len(args) < 3 else 5
     model = cp_model.CpModel()
@@ -91,8 +91,14 @@ def SearchForAllSolutions(*args):
     container = SolutionsContainer(vals)
     status = solver.SearchForAllSolutions(model, container)
 
+    trades = []
+    for arg in args:
+        currency = arg[0]["has_curr"]
+        trades.append(currency)
+    trades.insert(0, start)
     return {
-        "trades": ",".join([i[0]["has_curr"] for i in args]),
+        # "trades": ",".join([i[0]["has_curr"] for i in args]),
+        "trades": ",".join(trades),
         "solutions_num": container.solution_count(),
         "solutions": container.solutions(),
         "uuid_ref": uuid_ref,
