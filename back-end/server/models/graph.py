@@ -73,7 +73,7 @@ class Graph:
                 # paths[currency] = no_self_paths
         return paths
 
-    def _get_path_solutions(self, path):
+    def _get_path_solutions(self, path, start):
         """ Calls CP-Sat Solver to Get Solutions to whispers """
         listings_info = []
         for index in range(len(path) - 1):
@@ -81,7 +81,7 @@ class Graph:
             end_currency = path[index + 1]
             listing_info = self.graph[start_currency][end_currency]
             listings_info.append(listing_info["trades"])
-        solutions = SearchForAllSolutions(*listings_info)
+        solutions = SearchForAllSolutions(*listings_info, start=start)
         return solutions
 
     def _get_trade_profit(self, path_info):
@@ -158,7 +158,7 @@ class Graph:
         profits = []
         for path in paths:
             # profits.append(self._get_path_solutions(path))
-            path_solutions = self._get_path_solutions(path)
+            path_solutions = self._get_path_solutions(path, start=starting_currency)
             profits += self._get_trade_profit(path_solutions)
         for entry in profits:
             if not entry["listings"]:
