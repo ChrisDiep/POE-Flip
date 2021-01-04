@@ -3,13 +3,11 @@ import { Col, Row, Container, Form, OverlayTrigger, Tooltip, Tab, Nav, Button, I
 import axios from 'axios'
 
 import SearchBar from './searchBar'
-import dummy from './dummy'
 
-function Selection() {
+function Selection({ getListings, staticInfo }) {
   const LEAGUES = ["Heist", "Hardcore Heist", "Flashback (DRE007)", "Flashback HC (DRE008)", "Standard", "Hardcore"]
   const [leagues, setLeagues] = useState(LEAGUES)
   const [league, setLeague] = useState(leagues[0])
-  const [staticInfo, setStaticInfo] = useState(dummy.static.slice(0, 10))
 
   // useEffect(() => {
 
@@ -75,6 +73,10 @@ function Selection() {
             </Col>
           </Row>
         </Tab.Container>
+      </Row>
+      <Row className="justify-content-end">
+        <Button variant="primary">Reset</Button>
+        <Button variant="primary" onClick={()=>getListings()}>Search</Button>
       </Row>
     </Container>
   );
