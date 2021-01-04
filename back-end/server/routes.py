@@ -1,10 +1,11 @@
+from flask import Response
 from server.index import app
 import requests
 import asyncio
 import json
 from server.models.api_calls import POEOfficial, POENinja
 from db.controller import Mongo
-from server.controllers.api import update_listings, get_time_estimate_seconds
+from server.controllers.api import update_listings, get_api_call_info
 from server.models.graph import Graph
 from server.models.sat_solver import *
 
@@ -51,10 +52,12 @@ def return_top_trades():
         return "hello"
 
 
-@app.route("/api/v1/currency/time")
+@app.route("/api/v1/currency/params")
 def time_estimate():
-    obj = {"minutes": round(get_time_estimate_seconds() / 60, 2)}
-    return json.dumps(obj)
+    api_call_info = get_api_call_info()
+    api_call_info["time_estimate_minutes"] = round(api_call_info["time_estimate"] / 60, 2)
+    del api_call_info['time_estimate']
+    return Response(json.dumps(api_call_info), mimetype="text/json")
 
 
 @app.route("/api/v1/currency")
@@ -70,7 +73,7 @@ def static_info():
             api = POEOfficial("placeholder", "Heist")
             mongo.insert_static_info(asyncio.run(api.get_currency_ref()))
             return mongo.get_static_info()
-        return static_info
+        return Response(static_info, mimetype="text/json")
 
 
 @app.route("/api/v1/graph")
@@ -80,4 +83,4 @@ def return_graph():
         # graph.get_profitable_trades("Chaos Orb")
         # return graph.print()
         # return json.dumps(graph.get_profitable_trades("Chaos Orb")["solutions"])
-        return json.dumps(graph.get_trades_profit("Chaos Orb"))
+        return Response(json.dumps(graph.get_trades_profit("Chaos Orb")), mimetype="text/json")
