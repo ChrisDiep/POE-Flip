@@ -76,11 +76,11 @@ function Selection({ getListings, staticInfo }) {
       <Row>
         {/* <Button variant="primary">Reset</Button> */}
         <Col className="text-left pl-0">
-          <Button variant="primary"><span className="fa fa-angle-double-up"></span></Button>
+          <Button className="collapse-arrow selection button" variant="primary"><span className="fa fa-angle-double-up"></span></Button>
         </Col>
         <Col className="text-right pr-0">
-          <Button variant="primary"><span className="fa fa-refresh"></span></Button>
-          <Button variant="primary" onClick={() => getListings()}>Search</Button>
+          <Button className="reset selection button" variant="primary"><span className="fa fa-refresh"></span></Button>
+          <Button className="search selection button" variant="primary" onClick={() => getListings()}>Search</Button>
         </Col>
       </Row>
     </Container>
