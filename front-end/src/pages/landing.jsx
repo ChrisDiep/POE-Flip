@@ -1,8 +1,9 @@
 import { React, useState, useEffect } from 'react';
-import { Col, Row, Container } from "react-bootstrap"
+import { Col, Row, Container, Card } from "react-bootstrap"
 import Selection from '../components/Selection'
 import Listings from '../components/Listings'
 import dummy from '../components/dummy'
+import '../App.css'
 function Landing() {
   const [listings, setListings] = useState(null)
   const [staticInfo, setStaticInfo] = useState(dummy.static.slice(0, 10))
@@ -15,26 +16,22 @@ function Landing() {
     }, {})
   }
   function getListings() {
-    if (!listings) {
-      const new_listings = dummy.listings.map((listing) => {
-        listing["trades"].unshift("Chaos Orb");
-        console.log(listing["trades"])
-        return listing;
-      })
-      setListings(new_listings)
-    }
+    setListings(dummy.listings)
   }
   return (
-    <div>
-      <Container>
-        <Row>
+    <Card className="landing-card" bg="dark">
+      <Card.Body>
+        {/* <Container className="landing-container"> */}
+        <Row className="justify-content-center selection-row" style={{ "width": "95%" }}>
           <Selection getListings={getListings} staticInfo={staticInfo}></Selection>
-
         </Row>
         {listings
-          && <Row><Listings listings={listings} imagesRef={imagesRef}></Listings></Row>}
-      </Container>
-    </div>
+          && <Row className="listings-row" style={{ "margin-top": "10px", "width": "95%" }}>
+            <Listings listings={listings} imagesRef={imagesRef}></Listings>
+          </Row>}
+        {/* </Container> */}
+      </Card.Body>
+    </Card>
   );
 }
 
