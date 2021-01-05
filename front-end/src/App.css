@@ -12,6 +12,15 @@
 
 .icon-button {
   background:rgba(119, 119, 119, 0.479);
+  /* border-color:#222529 */
+}
+.icon-button:hover {
+  background:rgba(167, 166, 166, 0.479);
+  /* border-color: #5b636e; */
+  border-color:#222529
+}
+.icon-button.selected {
+  border-color:white;
 }
 
 .landing-card {

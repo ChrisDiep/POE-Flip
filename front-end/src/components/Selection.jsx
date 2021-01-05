@@ -6,12 +6,19 @@ import SearchBar from './searchBar'
 
 function Selection({ getListings, staticInfo }) {
   const LEAGUES = ["Heist", "Hardcore Heist", "Flashback (DRE007)", "Flashback HC (DRE008)", "Standard", "Hardcore"]
-  const [leagues, setLeagues] = useState(LEAGUES)
-  const [league, setLeague] = useState(leagues[0])
-
-  // useEffect(() => {
-
-  // }, [])
+  const [leagues, setLeagues] = useState(LEAGUES);
+  const [league, setLeague] = useState(leagues[0]);
+  const [activeButtons, setActiveButtons] = useState({});
+  const [selectedCurrency, setSelectedCurrency] = useState([]);
+  function setActive(e) {
+    e.preventDefault();
+    // console.log(e.target.parentElement.children[0].src)
+    // console.log(e.target.parentElement)
+    const newObject = {};
+    Object.assign(newObject, activeButtons)
+    newObject[e.target.parentElement.children[0].src] = true;
+    setActiveButtons(newObject);
+  }
   return (
     <Container>
       <Row className="justify-content-end">
@@ -62,7 +69,9 @@ function Selection({ getListings, staticInfo }) {
                         </Tooltip>
                       }
                     >
-                      <Button className="m-1 icon-button" variant="outline-dark" style={{ "max-height": "40px", "max-width": "40px", "padding": "4px" }}>
+                      <Button
+                      className={`m-1 icon-button ${activeButtons.hasOwnProperty(`https://web.poecdn.com${val['image']}`) ? "selected" : ''}`}
+                      variant="outline-dark" style={{ "max-height": "40px", "max-width": "40px", "padding": "4px" }} onClick={(e) => setActive(e)}>
                         <Image style={{ "max-height": "32px", "max-width": "32px" }} src={`https://web.poecdn.com${val["image"]}`}></Image>
                       </Button>
                     </OverlayTrigger>
