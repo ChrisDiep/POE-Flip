@@ -5,6 +5,7 @@ from math import floor
 # Settings
 LISTINGS_START = 0
 LISTINGS_STOP = 4
+# LISTINGS_STOP = 2
 MAX_TIME = 10.0
 
 
@@ -78,10 +79,12 @@ def SearchForAllSolutions(*args, start):
             )
             eqn1.append(coeff * constraint["val"])
             vals.append(constraint["val"])
+        # print(f'eqn1: {eqn1}')
         for constraint in constraints[index + 1]:
             constraint = constraints[index + 1][constraint]
             eqn2.append(constraint["coefficients"][0] * constraint["val"])
             vals.append(constraint["val"])
+        # print(f'eqn2: {eqn2}')
 
         model.Add(sum(eqn1) == sum(eqn2))
 
@@ -89,7 +92,16 @@ def SearchForAllSolutions(*args, start):
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = MAX_TIME
     container = SolutionsContainer(vals)
+
+    # solver.parameters.log_search_progress = True
+
     status = solver.SearchForAllSolutions(model, container)
+
+    ###
+    # print(solver.StatusName(status))
+    # print(container.solution_count())
+    # print(container.solutions())
+    ###
 
     trades = []
     trades.append(start)
@@ -98,7 +110,7 @@ def SearchForAllSolutions(*args, start):
 
     return {
         # "trades": ",".join([i[0]["has_curr"] for i in args]),
-        "trades":','.join(trades),
+        "trades": ",".join(trades),
         "solutions_num": container.solution_count(),
         "solutions": container.solutions(),
         "uuid_ref": uuid_ref,
@@ -114,6 +126,7 @@ def _get_constraint(model, listings, index):
         uuid1 = uuid.uuid1()
         max_val = floor(listing["has_stock"] / listing["has_rate"])
         coefficient_p1 = listing["want_rate"] if index != 0 else listing["has_rate"]
+        # coefficient_p1 = listing["want_rate"] if index == 0 else listing["has_rate"]
         coefficient_p2 = listing["want_rate"] * listing["has_rate"]
         conversion = coefficient_p2 if index % 2 == 0 else listing["has_rate"]
         constraint[str(uuid1)] = {
@@ -127,3 +140,31 @@ def _get_constraint(model, listings, index):
             "conversion": conversion,
         }
     return (constraint, ref)
+
+
+# arr2 = [
+#     [
+#         {"has_curr": "curr", "want_rate": 100, "has_rate": 1, "has_stock": 24},
+#     ],
+#     [
+#         {"has_curr": "curr", "want_rate": 1, "has_rate": 10, "has_stock": 24},
+#         {"has_curr": "curr", "want_rate": 1, "has_rate": 25, "has_stock": 25},
+#     ],
+#     [
+#         {"has_curr": "curr", "want_rate": 5, "has_rate": 20, "has_stock": 60},
+#         {"has_curr": "curr", "want_rate": 1, "has_rate": 5, "has_stock": 30},
+#     ],
+# ]
+# arr3 = [
+#     [
+#         {"has_curr": "curr", "want_rate": 50, "has_rate": 110, "has_stock": 851},
+#     ],
+#     [
+#         {"has_curr": "curr", "want_rate": 60, "has_rate": 1, "has_stock": 15},
+#     ],
+#     [
+#         {"has_curr": "curr", "want_rate": 5, "has_rate": 76, "has_stock": 9861},
+#         {"has_curr": "curr", "want_rate": 5, "has_rate": 76, "has_stock": 249},
+#     ],
+# ]
+# SearchForAllSolutions(*arr2, start="curr")
