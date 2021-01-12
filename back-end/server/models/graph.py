@@ -7,6 +7,7 @@ class Graph:
     """ Class for creating and analyzing a graph of currencies """
 
     def __init__(self, data):
+        # self.MIN_TRADES = 3
         self.MIN_TRADES = 2
         self.data = data
         self.data_dict = self.create_dict(data)
@@ -121,7 +122,7 @@ class Graph:
             start_curr_info = []
             end_curr_info = []
             if obj["trades"][0] in obj["listings"]:
-                start_curr_info = obj["listings"][obj["trades"][0]]
+                start_curr_info = obj["listings"][obj["trades"][1]]
                 end_curr_info = obj["listings"][obj["trades"][-1]]
             start_amt = 0
             end_amt = 0
@@ -134,7 +135,7 @@ class Graph:
                 has_rate = listing["info"]["has"]["min_amount"]
                 end_amt += solution * has_rate
             obj["total_profit"] = end_amt - start_amt
-            obj["profit_per_trade"] = obj["total_profit"] / obj["trades_num"]
+            obj["profit_per_trade"] = round(obj["total_profit"] / obj["trades_num"], 2)
             objs.append(obj)
         return objs
 
@@ -144,6 +145,8 @@ class Graph:
         for entry in entries:
             if entry not in new_entries:
                 new_entries.append(entry)
+            # else:
+            #     print(entry)
         return new_entries
 
     def get_trades_profit(self, starting_currency):
