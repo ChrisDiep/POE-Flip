@@ -32,7 +32,7 @@ def return_top_trades():
         "fusing",
         "vaal-orb",
     ]
-    api = POEOfficial("placeholder", "Heist")
+    api = POEOfficial("placeholder", "Standard")
     # Retrieve API Information
     # Traverse through Info to get top listings
     with Mongo() as mongo:
@@ -83,4 +83,6 @@ def return_graph():
         # graph.get_profitable_trades("Chaos Orb")
         # return graph.print()
         # return json.dumps(graph.get_profitable_trades("Chaos Orb")["solutions"])
-        return Response(json.dumps(graph.get_trades_profit("Chaos Orb")), mimetype="text/json")
+        return Response(json.dumps(graph.get_trades_profit("Chaos Orb")[0:30]), mimetype="text/json")
+        # return Response(json.dumps(graph.get_trades_profit("Chaos Orb")), mimetype="text/json")
+
