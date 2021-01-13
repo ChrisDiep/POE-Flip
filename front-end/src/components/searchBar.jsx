@@ -1,6 +1,6 @@
 import React from 'react';
 import { InputGroup, FormControl, DropdownButton, Dropdown } from "react-bootstrap";
-
+import '../App.css'
 function searchBar({ leagues, league, setLeague }) {
   return (
     <InputGroup>
@@ -8,6 +8,7 @@ function searchBar({ leagues, league, setLeague }) {
         placeholder="Highlight items"
       />
       <DropdownButton
+        id="dropdown-button"
         as={InputGroup.Append}
         title={league}
       >

@@ -11,6 +11,7 @@ mongoengine = "*"
 python-dateutil = "*"
 networkx = "*"
 ortools = "*"
+flask-cors = "*"
 
 [dev-packages]
 pylint = "*"

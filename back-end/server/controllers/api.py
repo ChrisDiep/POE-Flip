@@ -14,7 +14,7 @@ currencies = [
 currency_ref = None
 reverse_currency_ref = None
 poe_official_currencies = []
-LEAGUE = "Heist"
+LEAGUE = "Standard"
 DELAY = 1.4
 
 
@@ -70,7 +70,7 @@ def update_listings():
     poe_official = POEOfficial("placeholder", LEAGUE)
     static_info = asyncio.run(poe_official.get_currency_ref())
     _parse_currency_ref(static_info)
-    total_time = get_time_estimate_seconds()
+    total_time = get_api_call_info()["time_estimate"]
     elapsed_time = 0
     with Mongo(reverse_currency_ref) as mongo:
         mongo.insert_static_info(static_info)

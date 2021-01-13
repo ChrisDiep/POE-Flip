@@ -1,12 +1,99 @@
 .App {
   text-align: center;
-  /* background-color: #282c34; */
+  background-color: #282c34;
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .api-call-switch {
   user-select: none;
 }
 
+.icon-button {
+  background:rgba(119, 119, 119, 0.479);
+  /* border-color:#222529 */
+}
+.icon-button:hover {
+  background:rgba(167, 166, 166, 0.479);
+  /* border-color: #5b636e; */
+  border-color:#222529
+}
+.icon-button.selected {
+  border-color:white;
+}
+
+.landing-card {
+  min-width:48vw;
+}
+.selection-row {
+  width: 95%;
+  margin: auto;
+}
+.listings-row {
+  margin-top: 10px;
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+}
+.accordion-collapse {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+.whisper-copy {
+  background: #e9ecef;
+  color: black;
+  border: rgb(206, 212, 218) 1px solid;
+}
+.whisper-copy,.whisper-copy:focus,.whisper-copy:active,
+.whisper-copy:active:focus:not(:disabled):not(.disabled),
+.whisper-copy:focus, .whisper-copy:active, .whisper-copy:hover {
+  background: #e9ecef!important;
+  outline: 0;
+  box-shadow: none!important;
+  color: black;
+}
+.whisper-copy:focus {
+  background:#e9ecef!important;
+}
+.search.selection.button {
+  margin-left:10px;
+}
+.selection.button {
+  background: none;
+  border: 1px solid #139066;
+}
+.selection.button:hover{
+  background:#139066;
+}
+.selection.button:active, .selection.button:focus, #dropdown-button:active, #dropdown-button:focus {
+  outline: 0;
+  box-shadow: none!important;
+}
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+  color: white;
+  background-color: #139066;
+}
+a {
+  color:white;
+}
+a:hover {
+  color: #139066;
+}
+#dropdown-button {
+  background: #139066;
+  border-color: #139066!important;
+}
+#dropdown-button:not(:disabled):not(.disabled).active, #dropdown-button:not(:disabled):not(.disabled):active, .show>#dropdown-button.dropdown-toggle {
+  border-color: #139066!important;
+}
+
+/*
+.nav-pills > a {
+  color: white;
+} */
 /* .App-logo {
   height: 40vmin;
   pointer-events: none;
