@@ -5,8 +5,8 @@ A site for finding exchange differences between currencies in Path of Exile that
 
 1. [Showcase](#showcase)
 1. [Main Libraries](#main-libraries)
-1. [Algorithm Explanation](diving-into-the-algorithm)
-1. [Future Steps](future-steps)
+1. [Algorithm Explanation](#diving-into-the-algorithm)
+1. [Future Steps](#future-steps)
 
 ## Showcase
 <div>
