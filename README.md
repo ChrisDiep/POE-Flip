@@ -1,5 +1,5 @@
 # POE-Flip (WIP)
-A site for finding exchange differences between currencies in Path of Exile that can be used to generate short-term profit, i.e. arbitrage for virtual in-game currency. Trade listings for each currency is grabbed from the Path of Exile API and the information is mapped out onto a graph data structure. Profitable trades are then determined using constraint programming algorithms. The desired goal is a product that displays viable trades in a visually appealing manner using React/Bootstrap/JavaScript with information provided by a Python Flask back-end.
+A site for finding exchange differences between currencies in Path of Exile that can be used to generate short-term profit, i.e. arbitrage for virtual in-game currency. Trade listings for each currency are grabbed from the Path of Exile API and the information is mapped out onto a graph data structure. Profitable trades are then determined using constraint programming algorithms. The desired goal is a product that displays viable trades in a visually appealing manner using React/Bootstrap/JavaScript with information provided by a Python Flask back-end.
 
 ## Table of Contents
 
@@ -10,7 +10,7 @@ A site for finding exchange differences between currencies in Path of Exile that
 
 ## Showcase
 <div>
-  <img src="https://im7.ezgif.com/tmp/ezgif-7-996897f4eb2f.gif" />
+  <img src="https://i.imgur.com/5Lst6le.gif" />
 </div>
 
 #### Currency Display
