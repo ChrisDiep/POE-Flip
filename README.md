@@ -74,7 +74,7 @@ The problem of determining which combinations of people to buy from and sell to 
   <img src="https://i.ibb.co/B4KYXrh/Screenshot-871.png" />
 </div>
 
-Solving this equation for the 2 currency mapping results in the [possible trades](results-sorted-by-profit) seen in the showcase section! With this approach, we have remedied the issues of M-to-N relationships, uneven listings, etc. mentioned in the arbitration summary section, albeit in a rather computation heavy manner.
+Solving this equation for the 2 currency mapping results in the [possible trades](#Results-Sorted-By-Profit) seen in the showcase section! With this approach, we have remedied the issues of M-to-N relationships, uneven listings, etc. mentioned in the arbitration summary section, albeit in a rather computation heavy manner.
 
 ## Future Steps
 
