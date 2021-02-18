@@ -78,7 +78,7 @@ Solving this equation for the 2 currency mapping results in the [possible trades
 
 ## Future Steps
 
-Currently, this site is suitable for usage by a single user; however, due to API limiting concerns and the high comptutation requirements, this would be fairly difficult to host for a large group of users as an increase in the number of users would result in a higher number of API calls and more computations required. While the amount of live data can be limited to a time interval to alleviate these issues, this would be detrimental when the number of users grow larger as users would compete with each other for avaliable listings necessitating smaller intervals between data fetching and computation.
+Currently, this site is suitable for usage by a single user; however, due to API limiting concerns and the high computation requirements, this would be fairly difficult to host for a large group of users as an increase in the number of users would result in a higher number of API calls and more computations required. While the amount of live data can be limited to a time interval to alleviate these issues, this would be detrimental when the number of users grow larger as users would compete with each other for avaliable listings necessitating smaller intervals between data fetching and computation.
 
 To solve the API limiting issues, in the future, I will be implementing client-side API calls so that the API limits apply per user rather than per instance of the server. Users would be executing API calls through their client and sending this information to the back-end for computation, then receiving the desired information back. With this approach, live data could be refreshed fairly quickly as a single user's client is unlikely to hit the API limit. 
 
